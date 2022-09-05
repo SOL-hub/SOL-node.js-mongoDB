@@ -5,10 +5,23 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended : true}));
 
 const MongoClient = require('mongodb').MongoClient;
-MongoClient.connect('mongodb+srv://parksol:<password>@cluster0.sxmgir1.mongodb.net/?retryWrites=true&w=majority', function(error, client){
+
+//어떤 데이터베이스에다 저장했나 명시해야함
+var db;
+
+MongoClient.connect('mongodb+srv://parksol:admin:tl!qkf!tl!qkf!1234@cluster0.sxmgir1.mongodb.net/?retryWrites=true&w=majority', function(error, client){
+    //연결되면 
+    if(error) return console.log(error)
+
+    db = client.db('todoList'); //todoList라는 database(폴더)에 연결행
+
+    // db.collection('post').insertOne('저장할 데이터', function(error, result){
+        db.collection('post').insertOne( {name : 'park', age : 20}, function(error, result){
+        console.log('저장완료');
+    });//내가 원하는데이터 저장
 
     app.listen(8080, function(){
-        console.log('test 8080')
+        console.log('test 8080');
     });
 });
 
