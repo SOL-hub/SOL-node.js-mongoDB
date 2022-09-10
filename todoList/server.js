@@ -42,8 +42,13 @@ app.post('/add', function(req, res){
     res.send('전송완료');
     console.log(req.body.title);
     console.log(req.body.date);
-    db.collection('post').insertOne({title : req.body.title, date : req.body.date}, function(error, result){
-        console.log('저장완료2')
+    db.collection('counter').findOne({name : 'postCounter'}, function(error, result){
+        console.log(result.totalPost)
+        var postCounter = result.totalPost;
+
+        db.collection('post').insertOne({ _id : postCounter + 1, title : req.body.title, date : req.body.date}, function(error, result){
+            console.log('저장완료2')
+        });
     });
 });
 
