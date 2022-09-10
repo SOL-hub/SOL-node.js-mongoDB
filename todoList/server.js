@@ -40,31 +40,20 @@ app.get('/write', function(req, res){
 
 app.post('/add', function(req, res){
     res.send('전송완료');
-    db.collection('counter').findOne({name : 'postCounter'}, function(error, result){
+    db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
         console.log(result.totalPost)
         var postCounter = result.totalPost;
 
-        db.collection('post').insertOne({ _id : postCounter + 1, title : req.body.title, date : req.body.date}, function(error, result){
-            console.log('저장완료2')
-            // db.collection('counter').updateOne({어떤_데이터를_수정할지},{수정할_값}, function(){})
-            db.collection('counter').updateOne({name:'postCounter'},{ $inc : {totalPost:1}}, function(error, result){
-                if(error){return console.log(error)}
-            })
+        db.collection('post').insertOne({ _id : totalPost+ 1, title : req.body.title, date : req.body.date }, function(error, result){
+            console.log('저장완료2');
         });
     });
 });
-
-//operator
-// $set(변경)
-// $int(증가)
-// $min(기존값보다 적을 때만 변경)
-// $rename(key값 이름변경)
 
 
 app.get('/list', function(req, res){
     db.collection('post').find().toArray(function(error, result){
         console.log(result);
-        
         res.render('list.ejs', {posts: result});
     });
     
