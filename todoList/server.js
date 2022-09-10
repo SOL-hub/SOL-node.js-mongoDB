@@ -42,10 +42,17 @@ app.post('/add', function(req, res){
     res.send('전송완료');
     db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
         console.log(result.totalPost)
-        var postCounter = result.totalPost;
-
-        db.collection('post').insertOne({ _id : totalPost+ 1, title : req.body.title, date : req.body.date }, function(error, result){
+        var totalPostCounter = result.totalPost;
+        
+        db.collection('post').insertOne({ _id : totalPostCounter+ 1, title : req.body.title, date : req.body.date }, function(error, result){
             console.log('저장완료2');
+            //counter라는 콜렉션에 있는 totalPost라는 항목도 1증가시켜야함(수정)
+            //db.collection('counter').updateOne({어떤_데이터를_수정할지},{수정할_값}, function(){})
+            db.collection('counter').updateOne({name:'게시물갯수'},{ $inc : {totalPost:1}}, function(error, result){
+                if(error){
+                    return console.log(error)
+                }
+            });
         });
     });
 });
@@ -54,6 +61,7 @@ app.post('/add', function(req, res){
 app.get('/list', function(req, res){
     db.collection('post').find().toArray(function(error, result){
         console.log(result);
+        
         res.render('list.ejs', {posts: result});
     });
     
