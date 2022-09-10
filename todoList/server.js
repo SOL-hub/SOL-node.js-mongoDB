@@ -9,14 +9,14 @@ const MongoClient = require('mongodb').MongoClient;
 //어떤 데이터베이스에다 저장했나 명시해야함
 var db;
 
-MongoClient.connect('mongodb+srv://parksol:admin:tl!qkf!tl!qkf!1234@cluster0.sxmgir1.mongodb.net/?retryWrites=true&w=majority', function(error, client){
-    //연결되면 
+MongoClient.connect('mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoapp?retryWrites=true&w=majority', function(error, client){
+    //연결되면       mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoapp?retryWrites=true&w=majority
     if(error) return console.log(error)
 
     db = client.db('todoList'); //todoList라는 database(폴더)에 연결행
 
     // db.collection('post').insertOne('저장할 데이터', function(error, result){
-        db.collection('post').insertOne( {name : 'park', age : 20}, function(error, result){
+        db.collection('post').insertOne( {name : 'park', _id : 100}, function(error, result){
         console.log('저장완료');
     });//내가 원하는데이터 저장
 
