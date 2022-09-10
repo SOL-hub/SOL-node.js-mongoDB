@@ -11,7 +11,7 @@ app.set('view engine', 'ejs');//설치한 EJS를 쓰겠다는 선언
 //어떤 데이터베이스에다 저장했나 명시해야함
 var db;
 
-MongoClient.connect('mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoapp?retryWrites=true&w=majority', function(error, client){
+MongoClient.connect('mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoList?retryWrites=true&w=majority', function(error, client){
     //연결되면       mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoapp?retryWrites=true&w=majority
     if(error) return console.log(error)
 
@@ -40,24 +40,31 @@ app.get('/write', function(req, res){
 
 app.post('/add', function(req, res){
     res.send('전송완료');
-    console.log(req.body.title);
-    console.log(req.body.date);
     db.collection('counter').findOne({name : 'postCounter'}, function(error, result){
         console.log(result.totalPost)
         var postCounter = result.totalPost;
 
         db.collection('post').insertOne({ _id : postCounter + 1, title : req.body.title, date : req.body.date}, function(error, result){
             console.log('저장완료2')
+            // db.collection('counter').updateOne({어떤_데이터를_수정할지},{수정할_값}, function(){})
+            db.collection('counter').updateOne({name:'postCounter'},{ $inc : {totalPost:1}}, function(error, result){
+                if(error){return console.log(error)}
+            })
         });
     });
 });
+
+//operator
+// $set(변경)
+// $int(증가)
+// $min(기존값보다 적을 때만 변경)
+// $rename(key값 이름변경)
 
 
 app.get('/list', function(req, res){
     db.collection('post').find().toArray(function(error, result){
         console.log(result);
         
-        //디비에 저장된 post라는 collection안에 모든 데이터를 꺼내줘!
         res.render('list.ejs', {posts: result});
     });
     
