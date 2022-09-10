@@ -43,15 +43,17 @@ app.post('/add', function(req, res){
     console.log(req.body.title);
     console.log(req.body.date);
     db.collection('post').insertOne({title : req.body.title, date : req.body.date}, function(error, result){
-    //내 collection중에 post를 가져오고 , insertOne을 붙여 내가 원하는 데이터를 집어넣자
         console.log('저장완료2')
     });
 });
 
-//collection은 하나의 파일명이다.
-// {제목 : 'test', 날짜 : 'test'}
 
-//list로 get요청으로 접속하면 실제 DB에 저장된 데이터들로 HTML보여줌
 app.get('/list', function(req, res){
-    res.render('list.ejs');
+    db.collection('post').find().toArray(function(error, result){
+        console.log(result);
+        
+        //디비에 저장된 post라는 collection안에 모든 데이터를 꺼내줘!
+        res.render('list.ejs', {posts: result});
+    });
+    
 });

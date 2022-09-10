@@ -37,13 +37,11 @@
           <!-- header end -->
 
           <!-- main start -->
-          <!-- <p>할 일 제목 : <%= 변수이름 %></p> -->
-          <p>할 일 제목 : <%=  %></p>
-          <p>할 일 마감날짜 : </p>
+          <p>할 일 제목 : <%= posts[0].title %></p>
+          <p>할 일 마감날짜 : <%= posts[0].date %></p>
 
-          <!-- 서버 데이터 집어넣어서 HTML만드는 법 (EJS 사용)-->
-          <!-- list.html을 list.ejs라고 바꿔줌. 그러면 🎀서버데이터를 삽입가능하기 때문이지🎀 -->
-          <!-- main end -->
+          <p>할 일 제목 : <%= posts[1].title %></p>
+          <p>할 일 마감날짜 : <%= posts[1].date %></p>
     
       </body>
     </html>
