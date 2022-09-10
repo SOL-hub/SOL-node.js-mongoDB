@@ -6,6 +6,8 @@ app.use(bodyParser.urlencoded({extended : true}));
 
 const MongoClient = require('mongodb').MongoClient;
 
+app.set('view engine', 'ejs');//설치한 EJS를 쓰겠다는 선언
+
 //어떤 데이터베이스에다 저장했나 명시해야함
 var db;
 
@@ -40,4 +42,16 @@ app.post('/add', function(req, res){
     res.send('전송완료');
     console.log(req.body.title);
     console.log(req.body.date);
+    db.collection('post').insertOne({title : req.body.title, date : req.body.date}, function(error, result){
+    //내 collection중에 post를 가져오고 , insertOne을 붙여 내가 원하는 데이터를 집어넣자
+        console.log('저장완료2')
+    });
+});
+
+//collection은 하나의 파일명이다.
+// {제목 : 'test', 날짜 : 'test'}
+
+//list로 get요청으로 접속하면 실제 DB에 저장된 데이터들로 HTML보여줌
+app.get('/list', function(req, res){
+    res.render('list.ejs');
 });
