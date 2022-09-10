@@ -34,11 +34,36 @@
               </div>
             </div>
           </nav>
-          <!-- header end -->
+          <!-- header end --> 
+          <p class="ml-2 my-3">서버에서 가져온 할 일 리스트</p>
 
-          <% for(var i = 0; i < posts.length; i++){ %>
-            <p>할 일 제목 : <%= posts[i].title %></p>
-            <p>할 일 마감날짜 : <%= posts[i].date %></p>
-          <% } %>
-      </body>
+          <ul class="list-group">
+            <% for(var i = 0; i < posts.length; i++){ %>
+              <li class="list-group-item">
+                <p>글 번호 : <%= post[i]._id %></p>
+                <p>할 일 제목 : <%= posts[i].title %></p>
+                <p>할 일 마감날짜 : <%= posts[i].date %></p>
+                <button class="delete" data-id="<%= posts[i]._id %>">삭제</button>
+              </li>
+            <% } %>
+          </ul>
+
+
+        </body>
+
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script>
+
+        $('.delete').click(function(e){
+          var contentNumber = e.target.dataset.id;
+
+            $.ajax({
+              method : 'DELETE',
+              url : '/delete',
+              data : {_id : contentNumber}
+            }).done(function(result){
+              
+            });
+        });
+      </script>
     </html>

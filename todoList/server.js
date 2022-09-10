@@ -61,8 +61,15 @@ app.post('/add', function(req, res){
 app.get('/list', function(req, res){
     db.collection('post').find().toArray(function(error, result){
         console.log(result);
-        
         res.render('list.ejs', {posts: result});
     });
     
+});
+
+app.delete('/delete', function(req, res){
+    console.log(req.body);
+    req.body._id = parseInt(req.body._id);
+    db.collection('post').deleteOne(req.body, function(error, result){
+        console.log('삭제완료');
+    });
 });
