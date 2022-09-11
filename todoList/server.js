@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended : true}));
 
 const MongoClient = require('mongodb').MongoClient;
+const methodOverride = require('method-override')
+app.use(methodOverride('_method'))
 
 app.set('view engine', 'ejs');//설치한 EJS를 쓰겠다는 선언
 app.use('/public', express.static('public'))
@@ -84,3 +86,11 @@ app.get('/detail/:id', function(req, res){
         res.render('detail.ejs', {data : result});
     })
 });
+
+
+app.get('/edit/:id', function(req, res){
+    db.collection('post').findOne({_id : parseInt(req.params.id)}, function(error, result){
+        console.log(result)
+        res.render('edit.ejs', {post : result})
+    })
+})
