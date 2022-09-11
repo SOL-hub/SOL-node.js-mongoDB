@@ -7,6 +7,7 @@ app.use(bodyParser.urlencoded({extended : true}));
 const MongoClient = require('mongodb').MongoClient;
 
 app.set('view engine', 'ejs');//설치한 EJS를 쓰겠다는 선언
+app.use('/public', express.static('public'))
 
 //어떤 데이터베이스에다 저장했나 명시해야함
 var db;
@@ -31,11 +32,13 @@ MongoClient.connect('mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/tod
 //서버를 띄우기 위한 기본 문법(서버 오픈하는 문법)
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+    // res.sendFile(__dirname + '/index.html');
+    res.render('index.ejs');
 });
 
 app.get('/write', function(req, res){
-    res.sendFile(__dirname + '/write.html')
+    // res.sendFile(__dirname + '/write.html')
+    res.render('write.ejs');
 });
 
 app.post('/add', function(req, res){
