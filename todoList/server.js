@@ -74,3 +74,10 @@ app.delete('/delete', function(req, res){
         res.status(200).send({message : '성공했습니다.'});
     });
 });
+
+app.get('/detail/:id', function(req, res){
+    db.collection('post').findOne({_id: parseInt(req.params.id)}, function(error, result){
+        console.log(result);
+        res.render('detail.ejs', {data : result});
+    })
+});
