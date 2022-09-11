@@ -40,7 +40,7 @@
           <ul class="list-group">
             <% for(var i = 0; i < posts.length; i++){ %>
               <li class="list-group-item">
-                <p>글 번호 : <%= post[i]._id %></p>
+                <p>글 번호 : <%= posts[i]._id %></p>
                 <p>할 일 제목 : <%= posts[i].title %></p>
                 <p>할 일 마감날짜 : <%= posts[i].date %></p>
                 <button class="delete" data-id="<%= posts[i]._id %>">삭제</button>
@@ -56,13 +56,17 @@
 
         $('.delete').click(function(e){
           var contentNumber = e.target.dataset.id;
+          var userClick = $(this);
 
             $.ajax({
               method : 'DELETE',
               url : '/delete',
               data : {_id : contentNumber}
             }).done(function(result){
-              
+                console.log('성공');
+                userClick.parent('li').fadeOut();
+            }).fail(function(xhr, testStatus, errorThrown){
+              console.log(xhr, textStatus, errorThrown);
             });
         });
       </script>

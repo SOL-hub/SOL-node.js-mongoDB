@@ -71,5 +71,6 @@ app.delete('/delete', function(req, res){
     req.body._id = parseInt(req.body._id);
     db.collection('post').deleteOne(req.body, function(error, result){
         console.log('삭제완료');
+        res.status(200).send({message : '성공했습니다.'});
     });
 });
