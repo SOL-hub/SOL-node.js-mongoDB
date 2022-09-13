@@ -13,14 +13,12 @@ app.use('/public', express.static('public'))
 
 require('dotenv').config()
 
-var db;
+let db;
 
 MongoClient.connect(process.env.DB_URL, function(error, client){
     if(error) return console.log(error)
 
     db = client.db('todoList');
-    // db.collection('post').insertOne( {name : 'park', _id : 100}, function(error, result){
-    //     console.log('저장완료');});
 
     app.listen(process.env.PORT, function(){
         console.log('test 8080');
@@ -35,28 +33,6 @@ app.get('/write', function(req, res){
     res.render('write.ejs');
 });
 
-//밑으로 내려!
-// app.post('/add', function(req, res){
-//     res.send('전송완료');
-//     db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
-//         console.log(result.totalPost)
-//         var totalPostCounter = result.totalPost;
-
-//         var willbeSave = { _id : totalPostCounter+ 1, writer : req.user._id, title : req.body.title, date : req.body.date }
-        
-//         db.collection('post').insertOne({ _id : totalPostCounter+ 1, title : req.body.title, date : req.body.date }, 
-//             function(error, result){
-//                 console.log('저장완료2');
-//             db.collection('counter').updateOne({name:'게시물갯수'},{ $inc : {totalPost:1}}, function(error, result){
-//                 if(error){
-//                     return console.log(error)
-//                 }
-//             });
-//         });
-//     });
-// });
-
-
 app.get('/list', function(req, res){
     db.collection('post').find().toArray(function(error, result){
         console.log(result);
@@ -69,7 +45,7 @@ app.delete('/delete', function(req, res){
     console.log(req.body);
     req.body._id = parseInt(req.body._id);
 
-    var willbeDeleteDate = { _id:req.body._id, writer : req.user._id }
+    const willbeDeleteDate = { _id:req.body._id, writer : req.user._id }
 
     db.collection('post').deleteOne(req.body, function(error, result){
         console.log('삭제완료');
@@ -173,9 +149,9 @@ app.post('/add', function(req, res){
     res.send('전송완료');
     db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
         console.log(result.totalPost)
-        var totalPostCounter = result.totalPost;
+        const totalPostCounter = result.totalPost;
 
-        var willbeSave = { _id : totalPostCounter+ 1, writer : req.user._id, title : req.body.title, date : req.body.date }
+        const willbeSave = { _id : totalPostCounter+ 1, writer : req.user._id, title : req.body.title, date : req.body.date }
         
         db.collection('post').insertOne( willbeSave, 
             function(error, result){
@@ -191,7 +167,7 @@ app.post('/add', function(req, res){
 
 
 app.get('/search', (req, res)=>{
-    var searchCondition = [
+    const searchCondition = [
         {
           $search: {
             index: 'titleSearch',
@@ -221,20 +197,27 @@ app.use('/board/sub', require('./routes/board.js'));
 
 //npm install multer 설치 후 사용법
 let multer = require('multer');
-var storage = multer.diskStorage({ //램에다 저장하고 싶다면 diskStorage말고 memoryStorage()로 
+const storage = multer.diskStorage({ //램에다 저장하고 싶다면 diskStorage말고 memoryStorage()로 
 
-  destination : function(req, file, cb){
-    cb(null, './public/image')
+  destination : function(req, file, callback){
+    callback(null, './public/image')
   },
-  filename : function(req, file, cb){
-    cb(null, file.originalname + 'date' + new Date())
+  filename : function(req, file, callback){
+    callback(null, file.originalname + 'date' + new Date())
   },
-  filefilter : function(req, file, cb){
-    
-  }
+  filefilter : function(req, file, callback){
+    const ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+            return callback(new Error('PNG, JPG만 업로드하세요'))
+        }
+        callback(null, true)
+    },
+    limits:{
+        fileSize: 1024 * 1024
+    }
 });
 
-var upload = multer({storage : storage});
+const upload = multer({storage : storage});
 
 
 app.get('/upload', function(req, res){
@@ -248,3 +231,9 @@ app.post('/upload', upload.single('profile'), function(req, res){
 
 //파일을 여러개 업로드하고 싶을 경우
 //app.post('/upload', upload.array('profile', 10 /* 받을 최대 갯수*/), function(req, res){
+
+
+//업로드한 이미지 조회
+app.get('/image/:imageName', function(req, res){
+    res.sendFile( __dirname + '/public/image' + req.params.imageName)
+});

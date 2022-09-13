@@ -1,4 +1,4 @@
-var router = require('express').Router();
+let router = require('express').Router();
 
 app.get('/sports', function(req, res){
     res.send('스포츠 게시판');
