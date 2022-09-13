@@ -35,22 +35,26 @@ app.get('/write', function(req, res){
     res.render('write.ejs');
 });
 
-app.post('/add', function(req, res){
-    res.send('전송완료');
-    db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
-        console.log(result.totalPost)
-        var totalPostCounter = result.totalPost;
+//밑으로 내려!
+// app.post('/add', function(req, res){
+//     res.send('전송완료');
+//     db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
+//         console.log(result.totalPost)
+//         var totalPostCounter = result.totalPost;
+
+//         var willbeSave = { _id : totalPostCounter+ 1, writer : req.user._id, title : req.body.title, date : req.body.date }
         
-        db.collection('post').insertOne({ _id : totalPostCounter+ 1, title : req.body.title, date : req.body.date }, function(error, result){
-            console.log('저장완료2');
-            db.collection('counter').updateOne({name:'게시물갯수'},{ $inc : {totalPost:1}}, function(error, result){
-                if(error){
-                    return console.log(error)
-                }
-            });
-        });
-    });
-});
+//         db.collection('post').insertOne({ _id : totalPostCounter+ 1, title : req.body.title, date : req.body.date }, 
+//             function(error, result){
+//                 console.log('저장완료2');
+//             db.collection('counter').updateOne({name:'게시물갯수'},{ $inc : {totalPost:1}}, function(error, result){
+//                 if(error){
+//                     return console.log(error)
+//                 }
+//             });
+//         });
+//     });
+// });
 
 
 app.get('/list', function(req, res){
@@ -64,8 +68,12 @@ app.get('/list', function(req, res){
 app.delete('/delete', function(req, res){
     console.log(req.body);
     req.body._id = parseInt(req.body._id);
+
+    var willbeDeleteDate = { _id:req.body._id, writer : req.user._id }
+
     db.collection('post').deleteOne(req.body, function(error, result){
         console.log('삭제완료');
+        if(result){console.log(result)}
         res.status(200).send({message : '성공했습니다.'});
     });
 });
@@ -154,6 +162,33 @@ passport.use(new LocalStrategy({
         done(null, result)
     })
   });
+
+app.post('/register', function(req, res){
+    db.collection('login').insertOne({ id : req.body.id, pw : req.body.pw }, function(error, result){
+        res.redirect('/')
+    })
+});
+
+app.post('/add', function(req, res){
+    res.send('전송완료');
+    db.collection('counter').findOne({name : '게시물갯수'}, function(error, result){
+        console.log(result.totalPost)
+        var totalPostCounter = result.totalPost;
+
+        var willbeSave = { _id : totalPostCounter+ 1, writer : req.user._id, title : req.body.title, date : req.body.date }
+        
+        db.collection('post').insertOne( willbeSave, 
+            function(error, result){
+                console.log('저장완료2');
+            db.collection('counter').updateOne({name:'게시물갯수'},{ $inc : {totalPost:1}}, function(error, result){
+                if(error){
+                    return console.log(error)
+                }
+            });
+        });
+    });
+});
+
 
 app.get('/search', (req, res)=>{
     var searchCondition = [
