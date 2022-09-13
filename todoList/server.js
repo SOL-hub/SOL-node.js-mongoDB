@@ -93,4 +93,12 @@ app.get('/edit/:id', function(req, res){
         console.log(result)
         res.render('edit.ejs', {post : result})
     })
-})
+});
+
+app.put('/edit', function(req, res){
+    db.collection('post').updateOne({ _id: parseInt(req.body.id)}, 
+    { $set : {title : req.body.title, date : req.body.date}}, function(error, result){
+        console.log("결과완료");
+        res.render('/list')
+    })
+});

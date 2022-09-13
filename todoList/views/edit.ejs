@@ -24,6 +24,7 @@
                 <form action="/add?_method=PUT" method="POST">
                 <div class="form-group">
                     <label>오늘의 할일</label>
+                    <input type="text" value="<%= post._id %>" name="id" style="display: none;">
                     <input value="<%= post.title %>" type="text" class="form-control" name="title">
                 </div>
                 <br/>
