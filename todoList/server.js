@@ -144,6 +144,21 @@ app.post('/message', areYouSureLogin, function(req, res){
       })
     }); 
 
+app.get('/message/:id', 로그인했니, function(req, res){
+
+    res.writeHead(200, {
+        "Connection": "keep-alive",
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+    });
+      
+    db.collection('message').find({parent : req.params.id}).toArray()
+    .then((result)=>{
+        res.write('event: test\n');
+        res.write('data:' + JSON.stringify(result) + '\n\n');
+        })
+    });
+
 passport.use(new LocalStrategy({
     usernameField: 'id',
     passwordField: 'pw',

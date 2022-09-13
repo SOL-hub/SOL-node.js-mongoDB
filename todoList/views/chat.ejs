@@ -41,10 +41,16 @@
       <script>
 
         var newPushChatroomId;
+        var eventSource;
 
         $('.list-group-item').click(function(){
             newPushChatroomId = this.dataset.id;
-        })
+
+            eventSource = new EventSource('/message' + newPushChatroomId);
+            eventSource.addEventListener('test', function(e){
+                console.log(JSON.parse(e.data));
+            });
+        });
 
         $('#send').click(function(){
             var chatContent = $('#chat-input').val(); 
