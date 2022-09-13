@@ -208,4 +208,7 @@ app.get('/search', (req, res)=>{
         console.log(result)
         res.render('search.ejs', {posts : result})
     })
-})
+});
+
+app.use('/shop', require('./routes/shop.js'));
+app.use('/board/sub', require('./routes/board.js'));
