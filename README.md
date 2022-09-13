@@ -15,3 +15,4 @@ node.js와 mongoDB를 사용하여 웹 서비스만들어보기
 - ajax 삭제요청 및 jquery이용하여 UI기능
 - 상세페이지 URL parameter
 - 페이지마다 있는 navbar 조립식으로 첨부하기
+- 글 수정기능 /edit, method-override 설치
