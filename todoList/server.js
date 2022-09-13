@@ -88,20 +88,20 @@ app.get('/detail/:id', function(req, res){
 });
 
 
-app.get('/edit/:id', function(req, res){
-    db.collection('post').findOne({_id : parseInt(req.params.id)}, function(error, result){
-        console.log(result)
-        res.render('edit.ejs', {post : result})
-    })
-});
+// app.get('/edit/:id', function(req, res){
+//     db.collection('post').findOne({_id : parseInt(req.params.id)}, function(error, result){
+//         console.log(result)
+//         res.render('edit.ejs', {post : result})
+//     })
+// });
 
-app.put('/edit', function(req, res){
-    db.collection('post').updateOne({ _id: parseInt(req.body.id)}, 
-    { $set : {title : req.body.title, date : req.body.date}}, function(error, result){
-        console.log("결과완료");
-        res.render('/list')
-    })
-});
+// app.put('/edit', function(req, res){
+//     db.collection('post').updateOne({ _id: parseInt(req.body.id)}, 
+//     { $set : {title : req.body.title, date : req.body.date}}, function(error, result){
+//         console.log("결과완료");
+//         res.render('/list')
+//     })
+// });
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -129,7 +129,7 @@ passport.use(new LocalStrategy({
     session: true,
     passReqToCallback: false,
   }, function (inputValueId, inputValuePw, done) {
-    //console.log(입력한아이디, 입력한비번);
+    // console.log(inputValueId, inputValuePw);
     db.collection('login').findOne({ id: inputValueId }, function (error, result) {
       if (error) return done(error)
   
@@ -141,3 +141,11 @@ passport.use(new LocalStrategy({
       }
     })
   }));
+
+  passport.serializeUser(function(user, done){ 
+    done(null, user.id)
+  });
+
+  passport.serializeUser(function(id, done){
+    done(null, {})
+  });
