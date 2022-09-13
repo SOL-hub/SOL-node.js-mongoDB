@@ -80,20 +80,20 @@ app.get('/detail/:id', function(req, res){
 });
 
 
-// app.get('/edit/:id', function(req, res){
-//     db.collection('post').findOne({_id : parseInt(req.params.id)}, function(error, result){
-//         console.log(result)
-//         res.render('edit.ejs', {post : result})
-//     })
-// });
+app.get('/edit/:id', function(req, res){
+    db.collection('post').findOne({_id : parseInt(req.params.id)}, function(error, result){
+        console.log(result)
+        res.render('edit.ejs', {post : result})
+    })
+});
 
-// app.put('/edit', function(req, res){
-//     db.collection('post').updateOne({ _id: parseInt(req.body.id)}, 
-//     { $set : {title : req.body.title, date : req.body.date}}, function(error, result){
-//         console.log("결과완료");
-//         res.render('/list')
-//     })
-// });
+app.put('/edit', function(req, res){
+    db.collection('post').updateOne({ _id: parseInt(req.body.id)}, 
+    { $set : {title : req.body.title, date : req.body.date}}, function(error, result){
+        console.log("결과완료");
+        res.render('/list')
+    })
+});
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -159,10 +159,21 @@ passport.use(new LocalStrategy({
   });
 
 app.get('/search', (req, res)=>{
+    var searchCondition = [
+        {
+          $search: {
+            index: 'titleSearch',
+            text: {
+              query: req.query.value,
+              path: 'title'
+            }
+          }
+        },
+        { $project : { title : 1, _id:0, score: { $meta: "searchScore"}}}
+      ] 
     console.log(req.query.value);
-    db.collection('post').find({title: req.query.value}).toArray((error, result)=>{
+    db.collection('post').aggregate(searchCondition).({ $text : { $search: req.query.value }}).toArray((error, result)=>{
         console.log(result)
         res.render('search.ejs', {posts : result})
     })
 })
-
