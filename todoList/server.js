@@ -212,3 +212,39 @@ app.get('/search', (req, res)=>{
 
 app.use('/shop', require('./routes/shop.js'));
 app.use('/board/sub', require('./routes/board.js'));
+
+
+
+//mongoDB 이미지를 그대로 저장하지않는다. 용량이 너무 크고, 일반하드에 저장하는 것이 싸고 간단하기 때문에
+//app.post()~ 어허! npm install multer을 설치하여 이 라이브러리를 이용하여 
+//multipart/form-data데이터를 쉽게 처리할 수 있게 도와줌, 파일전송을 저장, 분석 쉽게할 수 있게 도와줌
+
+//npm install multer 설치 후 사용법
+let multer = require('multer');
+var storage = multer.diskStorage({ //램에다 저장하고 싶다면 diskStorage말고 memoryStorage()로 
+
+  destination : function(req, file, cb){
+    cb(null, './public/image')
+  },
+  filename : function(req, file, cb){
+    cb(null, file.originalname + 'date' + new Date())
+  },
+  filefilter : function(req, file, cb){
+    
+  }
+});
+
+var upload = multer({storage : storage});
+
+
+app.get('/upload', function(req, res){
+    res.render('upload.ejs')
+});
+
+//app.post('/upload', upload.single('input의_name속성이름'), function(req, res){
+app.post('/upload', upload.single('profile'), function(req, res){
+    res.send('업로드완료')
+});
+
+//파일을 여러개 업로드하고 싶을 경우
+//app.post('/upload', upload.array('profile', 10 /* 받을 최대 갯수*/), function(req, res){
