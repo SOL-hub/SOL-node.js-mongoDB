@@ -45,12 +45,20 @@
 
         $('.list-group-item').click(function(){
             newPushChatroomId = this.dataset.id;
+            $('.chat-content').html('');
+
+            if(eventSource !=undefined){
+                eventSource.close()
+            }
 
             eventSource = new EventSource('/message' + newPushChatroomId);
             eventSource.addEventListener('test', function(e){
-                console.log(JSON.parse(e.data));
+                var getThis = JSON.parse(e.data);
+                getThis.forEach(function(i){
+                    $('.chat-content').append('<li><span class="chat-box">'+ i.content+ '</span></li>')
+                    });
+                });
             });
-        });
 
         $('#send').click(function(){
             var chatContent = $('#chat-input').val(); 
@@ -61,10 +69,8 @@
             
             $.post('/message', willbeSend).then(() => {  
                 console.log('전송성공')
+                });
             });
-
-            });
-
 
             var newPushChatroomId;
 

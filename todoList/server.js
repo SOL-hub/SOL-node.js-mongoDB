@@ -157,6 +157,18 @@ app.get('/message/:id', 로그인했니, function(req, res){
         res.write('event: test\n');
         res.write('data:' + JSON.stringify(result) + '\n\n');
         })
+        
+        const pipeline = [
+            { $match: { 'fullDocument.parent' : req.params.id } }
+        ];
+        
+        const collection = db.collection('message');
+        const changeStream = collection.watch(pipeline);
+        
+        changeStream.on('change', (result) => {
+            res.write('event: test\n');
+            res.write('data:' + JSON.stringify(result.fullDocument) +'\n\n');
+        });
     });
 
 passport.use(new LocalStrategy({
