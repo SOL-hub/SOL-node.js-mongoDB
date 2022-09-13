@@ -21,7 +21,7 @@
           <p class="ml-2 my-3 text-center">채팅방</p>
             <ul class="list-group">
                 <% for(let i = 0; i < data.length; i++){ %>
-                <li class="list-group-item">
+                <li class="list-group-item" data-id="<%= data[i]._id %>">
                     <p><%= data[0].title %></p>
                     <p><%= data[0].member[0] %></p>
                     <p>할 일 마감날짜 : <%= posts[i].date %></p>
@@ -30,8 +30,42 @@
                 </li>
                 <% } %>
             </ul>
+
+            <div class="input-group">
+                <input class="form-control" id="chat-input">
+                <button class="btn btn-secondary" id="send">전송</button>
+            </div>
         </body>
 
       <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script>
+
+        var newPushChatroomId;
+
+        $('.list-group-item').click(function(){
+            newPushChatroomId = this.dataset.id;
+        })
+
+        $('#send').click(function(){
+            var chatContent = $('#chat-input').val(); 
+            var willbeSend = {
+                parent: newPushChatroomId,
+                content: chatContent,
+            };
+            
+            $.post('/message', willbeSend).then(() => {  
+                console.log('전송성공')
+            });
+
+            });
+
+
+            var newPushChatroomId;
+
+            $('.list-group-item').click(function (){
+            $(this).css('background-color', '#eee');
+            newPushChatroomId = $(this).attr('data-id');
+            });
+      </script>
 
     </html>

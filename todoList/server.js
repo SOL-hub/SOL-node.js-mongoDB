@@ -130,6 +130,20 @@ app.get('/chat', areYouSureLogin, function(req, res){
     })
 });
 
+app.post('/message', areYouSureLogin, function(req, res){
+    const willbeSave = {
+        parent : req.body.parent,
+        userid : req.user._id,
+        content : req.body.content,
+        date : new Date(),
+      }
+      db.collection('message').insertOne(willbeSave)
+      .then((result)=>{
+      }).catch(()=>{
+        res.send('DB저장성공')
+      })
+    }); 
+
 passport.use(new LocalStrategy({
     usernameField: 'id',
     passwordField: 'pw',
