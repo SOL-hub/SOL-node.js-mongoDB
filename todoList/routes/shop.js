@@ -8,12 +8,16 @@ function areYouSureLogin(req, res, next){
     }
 }
 
-router.get('/shirts', areYouSureLogin, function(req, res){
+router.use(areYouSureLogin);
+//router.use('/shirts', areYouSureLogin);
+
+
+router.get('/shirts', function(req, res){
     res.send('셔츠 파는 페이지');
 });
 
 
-router.get('/pants', areYouSureLogin, function(req, res){
+router.get('/pants', function(req, res){
     res.send('스커트 파는 페이지');
 }); 
 
