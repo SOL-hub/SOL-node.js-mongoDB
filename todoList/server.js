@@ -11,10 +11,8 @@ app.use(methodOverride('_method'))
 app.set('view engine', 'ejs');
 app.use('/public', express.static('public'))
 
-//환경변수 사용을 위한 라이브러리를 설치 후 등록
 require('dotenv').config()
 
-//어떤 데이터베이스에다 저장했나 명시해야함
 var db;
 
 MongoClient.connect(process.env.DB_URL, function(error, client){
@@ -135,7 +133,6 @@ passport.use(new LocalStrategy({
     session: true,
     passReqToCallback: false,
   }, function (inputValueId, inputValuePw, done) {
-    // console.log(inputValueId, inputValuePw);
     db.collection('login').findOne({ id: inputValueId }, function (error, result) {
       if (error) return done(error)
   
@@ -172,7 +169,7 @@ app.get('/search', (req, res)=>{
         { $project : { title : 1, _id:0, score: { $meta: "searchScore"}}}
       ] 
     console.log(req.query.value);
-    db.collection('post').aggregate(searchCondition).({ $text : { $search: req.query.value }}).toArray((error, result)=>{
+        db.collection('post').find( { $text : { $search: req.query.value }} ).toArray((error, result)=>{
         console.log(result)
         res.render('search.ejs', {posts : result})
     })
