@@ -102,3 +102,42 @@ app.put('/edit', function(req, res){
         res.render('/list')
     })
 });
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+const { response } = require('express');
+
+//미들웨어 설정
+app.use(session({secret : '비밀코드', resave : true, saveUninitialized: false}));
+app.use(passport.initialize());
+app.use(passport.session()); 
+
+app.get('/login', function(req, res){
+    res.render('login.ejs')
+});
+
+app.post('/login', passport.authenticate('local', {
+    failureRedirect:'/fail'
+}), function(req, res){
+    res.redirect('/')
+});
+
+passport.use(new LocalStrategy({
+    usernameField: 'id',
+    passwordField: 'pw',
+    session: true,
+    passReqToCallback: false,
+  }, function (inputValueId, inputValuePw, done) {
+    //console.log(입력한아이디, 입력한비번);
+    db.collection('login').findOne({ id: inputValueId }, function (error, result) {
+      if (error) return done(error)
+  
+      if (!result) return done(null, false, { message: '존재하는 아이디확인완료' })
+      if (inputValuePw == result.pw) {
+        return done(null, result)
+      } else {
+        return done(null, false, { message: '비밀번호 틀렸거든요?' })
+      }
+    })
+  }));
