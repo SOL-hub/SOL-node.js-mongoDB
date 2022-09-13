@@ -123,6 +123,20 @@ app.post('/login', passport.authenticate('local', {
     res.redirect('/')
 });
 
+app.get('/mypage', areYouSureLogin, function(req, res){
+    console.log(req.user)
+    res.render('mypage.ejs', {user : req.user})
+});
+
+function areYouSureLogin(req, res, next){
+    if(req.user){
+        next()
+    } else{
+        res.send('로그인안하셨어요')
+    }
+
+}
+
 passport.use(new LocalStrategy({
     usernameField: 'id',
     passwordField: 'pw',
@@ -146,6 +160,9 @@ passport.use(new LocalStrategy({
     done(null, user.id)
   });
 
-  passport.serializeUser(function(id, done){
-    done(null, {})
+  passport.deserializeUser(function(id, done){
+    db.collection('login').findOne({id: id}, function(error, result){
+        done(null, result)
+    })
   });
+
