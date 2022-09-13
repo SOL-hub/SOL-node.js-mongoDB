@@ -32,7 +32,7 @@
                 <p>할 일 제목 : <%= posts[i].title %></p>
                 <p>할 일 마감날짜 : <%= posts[i].date %></p>
                 <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">삭제</button>
-                <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">수정</button>
+                <button class="btn btn-secondary chat" data-id="<%= posts[i].writer %>">채팅</button>
               </li>
             <% } %>
           </ul>
@@ -62,6 +62,14 @@
         $('#search').click(function(){
           var inputValue = $('#search-input').val()
           window.location.replace('/search?value=' + inputValue)
+        });
+
+        //채팅버튼 기능
+        $('.chat').click(function(){
+            var id = e.target.dataset.id;
+            $.post('/chatroom', {당한사람id: _id}).then(()=>{
+                console.log('성공')
+            })
         });
       </script>
     </html>

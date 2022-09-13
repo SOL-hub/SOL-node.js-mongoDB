@@ -108,8 +108,27 @@ function areYouSureLogin(req, res, next){
     } else{
         res.send('로그인안하셨어요')
     }
-
 }
+
+const {ObjectId} = require('mongodb');
+
+app.post('/chatroom', areYouSureLogin, function(req, res){
+    const willbeSave = {
+        title : '채팅채팅방',
+        member : [ObjectId(req.body.당한사람id), req.user._id],
+        date : new Date()
+      }
+    
+      db.collection('chatroom').insertOne(willbeSave).then(function(result){
+        res.send('저장완료')
+      });
+    });
+
+app.get('/chat', areYouSureLogin, function(req, res){
+    db.collection('chatroom').find({ member : req.user_id}).toArray().then(()=>{
+        req.render('chat.ejs', {data : result})
+    })
+});
 
 passport.use(new LocalStrategy({
     usernameField: 'id',
