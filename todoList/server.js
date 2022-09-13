@@ -11,27 +11,23 @@ app.use(methodOverride('_method'))
 app.set('view engine', 'ejs');//설치한 EJS를 쓰겠다는 선언
 app.use('/public', express.static('public'))
 
+//환경변수 사용을 위한 라이브러리를 설치 후 등록
+require('dotenv').config()
+
 //어떤 데이터베이스에다 저장했나 명시해야함
 var db;
 
-MongoClient.connect('mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoList?retryWrites=true&w=majority', function(error, client){
-    //연결되면       mongodb+srv://admin:qwe123@cluster0.kseihoi.mongodb.net/todoapp?retryWrites=true&w=majority
+MongoClient.connect(process.env.DB_URL, function(error, client){
     if(error) return console.log(error)
 
-    db = client.db('todoList'); //todoList라는 database(폴더)에 연결행
+    db = client.db('todoList');
+    // db.collection('post').insertOne( {name : 'park', _id : 100}, function(error, result){
+    //     console.log('저장완료');});
 
-    // db.collection('post').insertOne('저장할 데이터', function(error, result){
-        db.collection('post').insertOne( {name : 'park', _id : 100}, function(error, result){
-        console.log('저장완료');
-    });//내가 원하는데이터 저장
-
-    app.listen(8080, function(){
+    app.listen(process.env.PORT, function(){
         console.log('test 8080');
     });
 });
-
-
-//서버를 띄우기 위한 기본 문법(서버 오픈하는 문법)
 
 app.get('/', function(req, res){
     // res.sendFile(__dirname + '/index.html');
