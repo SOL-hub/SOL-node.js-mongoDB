@@ -40,11 +40,22 @@
 
       <p class="container mt-4"><strong>채팅방</strong></p>
       <button id="send">서버로 데이터 보내기</button>
+      <button id="room1">채팅방1입장</button>
+      <button id="room1">채팅방1에서 메세지 전송</button>
 
       <script>
         var socket = io();
+
+        $('#room1-send').click(function(){
+          socket.emit('room1-send', '채팅방입장했어!')
+        })
+
         $("#send").click(function () {
           socket.emit("user-send", "안녕하쇼");
+        });
+
+        socket.on('broadcast', function(data) {
+         $('#content').append('<div>' + data + '</div>')
         });
       </script>
     </main>
