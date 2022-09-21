@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 
+const http = require('http').createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(http);
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended : true}));
 
@@ -20,7 +24,7 @@ MongoClient.connect(process.env.DB_URL, function(error, client){
 
     db = client.db('todoList');
 
-    app.listen(process.env.PORT, function(){
+    http.listen(process.env.PORT, function(){
         console.log('test 8080');
     });
 });
@@ -297,3 +301,16 @@ app.post('/upload', upload.single('profile'), function(req, res){
 app.get('/image/:imageName', function(req, res){
     res.sendFile( __dirname + '/public/image' + req.params.imageName)
 });
+
+//socket
+app.get('/socket', function(req, res){
+    res.render('socket.ejs')
+  });
+
+io.on('connection', function(socket){
+    console.log('유저접속');
+
+    socket.on('user-send', function(data){
+        console.log(data)
+      });
+})

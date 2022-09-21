@@ -1,83 +1,104 @@
 <!DOCTYPE html>
 <html lang="ko">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Bootstrap demo</title>
-        <link rel="stylesheet" href="/public/main.css">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bootstrap demo</title>
+    <link rel="stylesheet" href="/public/main.css" />
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-      </head>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-  
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
-  
-      <body>
-        <!-- header -->
-        <%- include('nav.html') %>
-        <!-- header end -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
+      crossorigin="anonymous"
+    />
+  </head>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+    crossorigin="anonymous"
+  ></script>
 
-          <p class="ml-2 my-3 text-center">채팅방</p>
-            <ul class="list-group">
-                <% for(let i = 0; i < data.length; i++){ %>
-                <li class="list-group-item" data-id="<%= data[i]._id %>">
-                    <p><%= data[0].title %></p>
-                    <p><%= data[0].member[0] %></p>
-                    <p>할 일 마감날짜 : <%= posts[i].date %></p>
-                    <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">삭제</button>
-                    <button class="btn btn-secondary chat" data-id="<%= posts[i].writer %>">채팅</button>
-                </li>
-                <% } %>
-            </ul>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+    integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+    crossorigin="anonymous"
+  ></script>
 
-            <div class="input-group">
-                <input class="form-control" id="chat-input">
-                <button class="btn btn-secondary" id="send">전송</button>
-            </div>
-        </body>
+  <body>
+    <!-- header -->
+    <%- include('nav.html') %>
+    <!-- header end -->
 
-      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-      <script>
+    <p class="ml-2 my-3 text-center">채팅방</p>
+    <ul class="list-group">
+      <% for(let i = 0; i < data.length; i++){ %>
+      <li class="list-group-item" data-id="<%= data[i]._id %>">
+        <p><%= data[0].title %></p>
+        <p><%= data[0].member[0] %></p>
+        <p>할 일 마감날짜 : <%= posts[i].date %></p>
+        <button class="btn btn-danger delete" data-id="<%= posts[i]._id %>">
+          삭제
+        </button>
+        <button class="btn btn-secondary chat" data-id="<%= posts[i].writer %>">
+          채팅
+        </button>
+      </li>
+      <% } %>
+    </ul>
 
-        var newPushChatroomId;
-        var eventSource;
+    <div class="input-group">
+      <input class="form-control" id="chat-input" />
+      <button class="btn btn-secondary" id="send">전송</button>
+    </div>
+  </body>
 
-        $('.list-group-item').click(function(){
-            newPushChatroomId = this.dataset.id;
-            $('.chat-content').html('');
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script>
+    var newPushChatroomId;
+    var eventSource;
 
-            if(eventSource !=undefined){
-                eventSource.close()
-            }
+    $(".list-group-item").click(function () {
+      newPushChatroomId = this.dataset.id;
+      $(".chat-content").html("");
 
-            eventSource = new EventSource('/message' + newPushChatroomId);
-            eventSource.addEventListener('test', function(e){
-                var getThis = JSON.parse(e.data);
-                getThis.forEach(function(i){
-                    $('.chat-content').append('<li><span class="chat-box">'+ i.content+ '</span></li>')
-                    });
-                });
-            });
+      if (eventSource != undefined) {
+        eventSource.close();
+      }
 
-        $('#send').click(function(){
-            var chatContent = $('#chat-input').val(); 
-            var willbeSend = {
-                parent: newPushChatroomId,
-                content: chatContent,
-            };
-            
-            $.post('/message', willbeSend).then(() => {  
-                console.log('전송성공')
-                });
-            });
+      eventSource = new EventSource("/message" + newPushChatroomId);
+      eventSource.addEventListener("test", function (e) {
+        var getThis = JSON.parse(e.data);
+        getThis.forEach(function (i) {
+          $(".chat-content").append(
+            '<li><span class="chat-box">' + i.content + "</span></li>"
+          );
+        });
+      });
+    });
 
-            var newPushChatroomId;
+    $("#send").click(function () {
+      var chatContent = $("#chat-input").val();
+      var willbeSend = {
+        parent: newPushChatroomId,
+        content: chatContent,
+      };
 
-            $('.list-group-item').click(function (){
-            $(this).css('background-color', '#eee');
-            newPushChatroomId = $(this).attr('data-id');
-            });
-      </script>
+      $.post("/message", willbeSend).then(() => {
+        console.log("전송성공");
+      });
+    });
 
-    </html>
+    var newPushChatroomId;
+
+    $(".list-group-item").click(function () {
+      $(this).css("background-color", "#eee");
+      newPushChatroomId = $(this).attr("data-id");
+    });
+  </script>
+</html>
